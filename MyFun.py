@@ -1,3 +1,5 @@
+import random
+
 from PyQt5 import QtCore, QtWidgets
 from matplotlib.figure import Figure
 import numpy as np
@@ -5,8 +7,9 @@ import matplotlib as mpl
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 import time
-import FreqToStruct as FTS
 import matplotlib.pyplot as plt
+
+import FreqToStruct as FTS
 
 mpl.rc('font', family='Verdana')
 
@@ -189,6 +192,8 @@ class MyWindow(QtWidgets.QWidget):
         CSch, End, Start, Step, Tmass, WFCoeff, timeStep = self.valuesForCalc()
         global MassForRes
         MassForRes = np.arange(Start, End, Step, dtype=float)
+        for i in range(len(MassForRes)):
+            MassForRes[i] = round(MassForRes[i], 4)
 
         self.stat.setMinimum(0)
         self.stat.setMaximum(len(MassForRes))
@@ -205,7 +210,7 @@ class MyWindow(QtWidgets.QWidget):
         self.axes.legend()
         self.canvas.draw()
         self.stat.setValue(len(MassForRes))
-        FTS.FreqToStruct(self, wStep, quantStep, MassForRes, S, WFCoeff)
+        FTS.FreqToStruct(self,  MassForRes, S, WFCoeff)
         print(time.time() - t1)
 
     def valuesForCalc(self):
@@ -235,7 +240,7 @@ class MyWindow(QtWidgets.QWidget):
                 n = len(y)
                 test = (sum(y[0:(n - 1)]))
                 SetCurrent = test * timeStep + (y[0] + y[n - 1]) * timeStep / 2
-                S[j] += round(SetCurrent * WFCoeff[i - 1] / sum(WFCoeff), 10)
+                S[j] += round(SetCurrent * WFCoeff[i - 1] / sum(WFCoeff), 4)
             self.stat.setValue(int(j))
         # print(S)
 
@@ -255,13 +260,10 @@ class MyWindow(QtWidgets.QWidget):
         self.plainTextEdit.setPlainText(
             "Коэффициент передачи = {} \n\nω - относительная частота = {}".format(round(abs(S[count]), 10),
                                                                                   MassForRes[count]))
+
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
-
-    wStep = 0.05
-
-    quantStep = 2
     app = QApplication(sys.argv)
     window = MyWindow()
     window.setWindowTitle("Функция для нахождения площадей основных гармонических составляющих")
