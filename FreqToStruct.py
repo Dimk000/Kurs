@@ -10,10 +10,11 @@ def FreqToStruct(self, MassForRes, S, WFCoeff):
     sPoints = np.zeros(60)
     print(len(MassForRes))
     while count < len(MassForRes):
-        wPoints[l] = (MassForRes[count])
-        sPoints[l] = S[count]
+        wPoints[l] = MassForRes[count]
+        sPoints[l] = S[count] / sum(WFCoeff)
         count += StepInArray
         l += 1
+    print(sPoints)
     count = 0
     l = 0
 
@@ -36,7 +37,7 @@ def FreqToStruct(self, MassForRes, S, WFCoeff):
                     SPointsQuint[temp[j]] = -1
                 M[i][temp[j]] = SPointsQuint[temp[j]]
 
-    output_file = open("StructNew.csv", "w")
+    output_file = open("StructChange.csv", "w")
     wrtr = csv.writer(output_file)
     for row in M:
         wrtr.writerow(row)

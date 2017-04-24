@@ -202,7 +202,7 @@ class MyWindow(QtWidgets.QWidget):
             S = np.zeros(len(MassForRes), dtype=float)
             self.fn(CSch, MassForRes, S, Tmass, WFCoeff, timeStep)
 
-        self.axes.plot(MassForRes, abs(S), label="for {} : {} : {}".format(Start, Step, End))
+        self.axes.plot(MassForRes, abs(S/sum(WFCoeff)), label="for {} : {} : {}".format(Start, Step, End))
         self.axes.set_xbound(lower=0, upper=MassForRes.max())
         self.axes.set_xlabel('ω - относительная частота')
         self.axes.set_ylabel('Коэффициент передачи')
@@ -238,11 +238,11 @@ class MyWindow(QtWidgets.QWidget):
                     for k in range(0, len(t), 1):
                         y[k] = sin(2 * pi * MassForRes[j] * t[k])
                 n = len(y)
-                test = (sum(y[0:(n - 1)]))
+                test = (sum(y[1:(n)]))
                 SetCurrent = test * timeStep + (y[0] + y[n - 1]) * timeStep / 2
-                S[j] += round(SetCurrent * WFCoeff[i - 1] / sum(WFCoeff), 4)
+                S[j] += SetCurrent * WFCoeff[i - 1]
             self.stat.setValue(int(j))
-        # print(S)
+        print(S)
 
             # self.plainTextEdit.setPlainText("S =" + str(S))
             # self.plainTextEdit.appendPlainText("Step="+str(Step)+",   w="+str(MassForRes))
