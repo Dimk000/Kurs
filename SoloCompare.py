@@ -16,7 +16,7 @@ def solocomp(M, M1):
     overall2 = len(np.transpose(np.nonzero(M1)))
     structDif = abs(structValue2-structValue1)
     structDif_sum = sum(structDif)
-    diffCount = len(np.transpose(np.nonzero(M != M1)))
+    diffCount = len(np.transpose(np.nonzero(np.array(M != M1))))
     print('Сравнение двух структур')
     print('Общее колличесво элементов в первой структуре: ', overall1)
     print('Во второй структуре: ', overall2)

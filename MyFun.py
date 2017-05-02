@@ -1,8 +1,10 @@
 import time
 
 import FreqToStruct as FTS
+import SoloCompare as SC
 import matplotlib as mpl
 import numpy as np
+import csv
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import (QFrame, QHBoxLayout, QLabel, QLineEdit, QPlainTextEdit, QPushButton, QRadioButton,
                              QTabWidget,
@@ -43,7 +45,7 @@ class MyWindow(QtWidgets.QWidget):
         self.vbox_dop_character.addWidget(self.plainTextEdit)  # в третий бокс добавляем многострочное поле вв/выв
         self.vbox_dop_character.addWidget(self.stat)  # в третий бокс добавляем виджет прогресса выполнения
 
-        self.vbox_dop_characterWin2.addWidget(self.plainTextEditWin2)
+
         self.addLay_win()
         self.frameadd()
         # еще один вертикальный бокс, для ВООбще всего окна + вкладочки
@@ -71,7 +73,7 @@ class MyWindow(QtWidgets.QWidget):
         self.hbox_win1.addLayout(self.vbox_graph)  # во второе окно добавляем основной бокс
         self.hbox_win1.addLayout(self.vbox_dop_character)  # в третье окно добавляем основной бокс
 
-        self.hbox_win2.addLayout(self.vboxWin2)  # в первое окно добавляем основной бокс
+
         self.hbox_win2.addLayout(self.vbox_graphWin2)  # во второе окно добавляем основной бокс
         self.hbox_win2.addLayout(self.vbox_dop_characterWin2)  # в третье окно добавляем основной бокс
 
@@ -97,6 +99,10 @@ class MyWindow(QtWidgets.QWidget):
         self.vbox_dop_characterWin2.addWidget(self.quantStepEdit)
         self.vbox_dop_characterWin2.addWidget(self.wStepLbl)
         self.vbox_dop_characterWin2.addWidget(self.wStepEdit)
+        self.vbox_dop_characterWin2.addLayout(self.hbox_for_btn)
+        self.vbox_dop_characterWin2.addWidget(self.Start_GraphLine)
+        self.vbox_dop_characterWin2.addWidget(self.Start_GraphEdit)
+        self.vbox_dop_characterWin2.addWidget(self.plainTextEditWin2)
 
     def addGraph(self):
         self.figure = Figure()
@@ -117,8 +123,6 @@ class MyWindow(QtWidgets.QWidget):
         self.vbox.addWidget(self.btnQuit)
         self.vbox.addWidget(self.btnClear)
 
-        self.vboxWin2.addWidget(self.btnCalculateWin2)
-        self.vboxWin2.addWidget(self.btnQuitWin2)
 
     def btnClick(self):
         self.btnQuit.clicked.connect(self.close)
@@ -127,8 +131,12 @@ class MyWindow(QtWidgets.QWidget):
         self.btnClear.clicked.connect(self.clear)
         self.btnFound.clicked.connect(self.fnd)
 
-        self.btnQuitWin2.clicked.connect(self.close)
-        self.btnCalculateWin2.clicked.connect(self.calculate)
+        self.draw_graph_in_window.clicked.connect(self.meh1)
+        self.CompareGraph.clicked.connect(self.compare)
+    def meh1(self):
+        global choice
+        choice = float(self.Start_GraphEdit.text())
+        meh()
 
     def addPar(self):
         self.hbox_sin_cos.addWidget(self.CScos)  # добавляем радио кнопушки в гор бокс
@@ -152,28 +160,8 @@ class MyWindow(QtWidgets.QWidget):
         self.vbox.addWidget(self.CSTitle)
         # добавляем в верт блок слой с радио кнопушками
         self.vbox.addLayout(self.hbox_sin_cos)
-
-        self.hbox_sin_cosWin2.addWidget(self.CScosWin2)  # добавляем радио кнопушки в гор бокс
-        self.hbox_sin_cosWin2.addWidget(self.CSsinWin2)
-        self.hbox_nameWin2.addWidget(self.StartMasWin2)  # добавляем поля текста в гор бокс
-        self.hbox_nameWin2.addWidget(self.StepMasWin2)
-        self.hbox_nameWin2.addWidget(self.EndMasWin2)
-        self.hbox_editWin2.addWidget(self.StartMasEditWin2)  # добавляем поля ввода в гор бокс
-        self.hbox_editWin2.addWidget(self.StepMasEditWin2)
-        self.hbox_editWin2.addWidget(self.EndMasEditWin2)
         # добавляем в верт блок слои с полями значений
-        self.vboxWin2.addLayout(self.hbox_nameWin2)
-        self.vboxWin2.addLayout(self.hbox_editWin2)
-        # добавляем в верт блок виджеты с полями значений
-        self.vboxWin2.addWidget(self.TmassWin2)
-        self.vboxWin2.addWidget(self.TmassEditWin2)
-        self.vboxWin2.addWidget(self.WFCoeffLineWin2)
-        self.vboxWin2.addWidget(self.WFCoeffEditWin2)
-        self.vboxWin2.addWidget(self.timeStepLineWin2)
-        self.vboxWin2.addWidget(self.timeStepEditWin2)
-        self.vboxWin2.addWidget(self.CSTitleWin2)
-        # добавляем в верт блок слой с радио кнопушками
-        self.vboxWin2.addLayout(self.hbox_sin_cosWin2)
+
 
     def box(self):
         self.hbox_win1 = QHBoxLayout()  # гор. бокс для основного окна.
@@ -190,13 +178,17 @@ class MyWindow(QtWidgets.QWidget):
         self.hbox_nameWin2 = QHBoxLayout()  # бокс для трех полей(массив)
         self.hbox_editWin2 = QHBoxLayout()  # бокс для трех полей ввода(массив)
         self.hbox_sin_cosWin2 = QHBoxLayout()  # гор бокс для радиокнопушек синуса, косинуса
-        self.vboxWin2 = QVBoxLayout()  # бокс для ввода значений
+
         self.vbox_graphWin2 = QVBoxLayout()  # бокс для графика
         self.vbox_dop_characterWin2 = QVBoxLayout()  # бокс для правого окна
 
     def btnDef(self):
-        self.btnQuitWin2 = QPushButton("Закрыть")
-        self.btnCalculateWin2 = QPushButton("Сравнить")
+        self.hbox_for_btn = QHBoxLayout()
+        self.draw_graph_in_window = QPushButton("Нарисовать")
+        self.CompareGraph = QPushButton("Сравнить")
+        self.hbox_for_btn.addWidget(self.draw_graph_in_window)
+        self.hbox_for_btn.addWidget(self.CompareGraph)
+
 
         self.btnQuit = QPushButton("Закрыть")
         self.btnSave = QPushButton("Сохранить")
@@ -240,10 +232,11 @@ class MyWindow(QtWidgets.QWidget):
         self.EndMasEditWin2 = QLineEdit("3")
         self.EndMasEditWin2.setFixedWidth(100)
         self.TmassEditWin2 = QLineEdit("0 1 2 3 4 5 6")
-        self.WFCoeffEditWin2 = QLineEdit("0.89 5.13 9.97 10.03 4.74 1.35")
+        self.WFCoeffEditWin2 = QLineEdit("1.2 5.2 10.2 10.2 5.2 1.2")
         self.timeStepEditWin2 = QLineEdit("0.01")
         #  начальное значение для радио кнопушек синуса, коминуса
         self.CSWin2 = QLineEdit("0")
+        self.Start_GraphEdit = QLineEdit("0")
 
 
     def lbl(self):
@@ -275,7 +268,7 @@ class MyWindow(QtWidgets.QWidget):
         self.CSTitleWin2 = QLabel("CS")
         self.CSTitleWin2.setAlignment(QtCore.Qt.AlignCenter)
         self.CSTitleWin2.setStyleSheet("QLabel {background-color: #FFFFFF;border: 1px solid black;}")
-
+        self.Start_GraphLine = QLabel("Начало графика")
     # функции для косинуса и синуса(радио кнопушки)
     def CScosClick(self, enabled):
         if enabled:
@@ -286,57 +279,6 @@ class MyWindow(QtWidgets.QWidget):
         if enabled:
             self.CSTitle.setText('Для внешних помех')
             self.CS.setText('2')
-
-    def calculate(self):
-        t1 = time.time()
-        self.stat.reset()
-        CSch, End, Start, Step, Tmass, WFCoeff, timeStep = self.valuesForCalc()
-        global MassForRes, MassForRes1
-        MassForRes = np.arange(Start, End, Step, dtype=float)
-        MassForRes1 = np.arange(Start, End, Step, dtype=float)
-        WFCoeff1 = [1.2, 5.2, 10.2, 10.2, 5.2, 1.2]
-        Tmass1 = [0, 1, 2, 3, 4, 5, 6]
-        for i in range(len(MassForRes)):
-            MassForRes[i] = round(MassForRes[i], 4)
-            MassForRes1[i] = round(MassForRes1[i], 4)
-
-        self.stat.setMinimum(0)
-        self.stat.setMaximum(len(MassForRes))
-        if len(Tmass) == len(WFCoeff) + 1:
-            global S
-            S = np.zeros(len(MassForRes), dtype=float)
-            self.fn(CSch, MassForRes, S, Tmass, WFCoeff, timeStep)
-        if len(Tmass1) == len(WFCoeff1) + 1:
-            global S1
-            S1 = np.zeros(len(MassForRes1), dtype=float)
-            self.fn1(CSch, MassForRes1, S1, Tmass1, WFCoeff1, timeStep)
-        self.drw(Start, Step, End)
-        FTS.FreqToStruct(MassForRes, MassForRes1, S, S1, WFCoeff, WFCoeff1)
-        self.stat.setValue(len(MassForRes))
-        print(time.time() - t1)
-
-    def SaveToDb(self):
-        import sqlite3
-        conn = sqlite3.connect('my.db')
-        c = conn.cursor()
-
-        #  убрать комментарий при первом запуске
-        #  c.execute('''CREATE TABLE datas (tmass, wfcoeff)''')
-        def add_data(Tmass, WFCoeff):
-            c.execute("INSERT INTO datas (tmass,wfcoeff) VALUES ('%s','%s')" % (Tmass, WFCoeff))
-            conn.commit()
-
-        # Делаем запрос в базу
-        print("Данные:\n")
-        add_data(Tmass, WFCoeff)
-        c.execute('SELECT * FROM datas')
-        row = c.fetchone()
-        while row is not None:
-            print(" Tmass: " + row[0] + " | WFCoeff: " + row[1])
-            row = c.fetchone()
-        # закрываем соединение с базой
-        c.close()
-        conn.close()
 
     def valuesForCalc(self):
         Step = float(self.StepMasEdit.text())
@@ -349,6 +291,75 @@ class MyWindow(QtWidgets.QWidget):
         timeStep = float(self.timeStepEdit.text())
         CSch = int(self.CS.text())
         return CSch, End, Start, Step, Tmass, WFCoeff, timeStep
+
+    def calculate(self):
+        t1 = time.time()
+        self.stat.reset()
+        CSch, End, Start, Step, Tmass, WFCoeff, timeStep = self.valuesForCalc()
+        global MassForRes
+        MassForRes = np.arange(Start, End, Step, dtype=float)
+        WFCoeff1 = list(map(float, self.WFCoeffEditWin2.text().split()))
+        Tmass1 = list(map(float, self.TmassEditWin2.text().split()))
+        for i in range(len(MassForRes)):
+            MassForRes[i] = round(MassForRes[i], 4)
+
+        self.stat.setMinimum(0)
+        self.stat.setMaximum(len(MassForRes))
+        if len(Tmass) == len(WFCoeff) + 1:
+            global S
+            S = np.zeros(len(MassForRes), dtype=float)
+            self.fn(CSch, MassForRes, S, Tmass, WFCoeff, timeStep)
+        self.drw(Start, Step, End)
+        self.stat.setValue(len(MassForRes))
+        print(time.time() - t1)
+
+    def compare(self):
+        wStep = float(self.wStepEdit.text())
+        quantStep = int(self.quantStepEdit.text())
+        Mmain = FTS.FreqToStruct(MassForRes, S, WFCoeff, wStep, quantStep)
+        input_file = open('WFMass.txt', 'r')
+        WFMass = []
+        for line in input_file:
+            WFMass.append(line)
+        print(WFMass)
+        input_file.close()
+
+    def SaveToDb(self):
+
+        outfile = open('L:\\bgg1.csv', 'a')
+        CSch, End, Start, Step, Tmass, WFCoeff, timeStep = self.valuesForCalc()
+
+        for i in range(len(Tmass)):
+            outfile.write('%.2f' % Tmass[i])
+
+        outfile.write('\n')
+
+        for i in range(len(WFCoeff)):
+            outfile.write('%.5f' % WFCoeff[i])
+
+        outfile.write('\n')
+        outfile.close()
+        # import sqlite3
+        # conn = sqlite3.connect('my.db')
+        # c = conn.cursor()
+        #
+        # #  убрать комментарий при первом запуске
+        # #  c.execute('''CREATE TABLE datas (tmass, wfcoeff)''')
+        # def add_data(Tmass, WFCoeff):
+        #     c.execute("INSERT INTO datas (tmass,wfcoeff) VALUES ('%s','%s')" % (Tmass, WFCoeff))
+        #     conn.commit()
+        #
+        # # Делаем запрос в базу
+        # print("Данные:\n")
+        # add_data(Tmass, WFCoeff)
+        # c.execute('SELECT * FROM datas')
+        # row = c.fetchone()
+        # while row is not None:
+        #     print(" Tmass: " + row[0] + " | WFCoeff: " + row[1])
+        #     row = c.fetchone()
+        # # закрываем соединение с базой
+        # c.close()
+        # conn.close()
 
     def fn(self, CSch, MassForRes, S, Tmass, WFCoeff, timeStep):
         from math import sin, cos, pi
@@ -367,29 +378,7 @@ class MyWindow(QtWidgets.QWidget):
                 test = (sum(y[1:(n)]))
                 SetCurrent = test * timeStep + (y[0] + y[n - 1]) * timeStep / 2
                 S[j] += SetCurrent * WFCoeff[i - 1]
-        t = 0
-        n = 0
         print(S)
-
-    def fn1(self, CSch, MassForRes1, S1, Tmass1, WFCoeff1, timeStep):
-        from math import sin, cos, pi
-        for j in range(0, len(MassForRes1), 1):
-            S1[j] = 0
-            for i in range(1, len(Tmass1), 1):
-                t = np.arange(Tmass1[i - 1], Tmass1[i], timeStep)
-                y = np.zeros(len(t))
-                if CSch == 2:
-                    for k in range(0, len(t), 1):
-                        y[k] = cos(2 * pi * MassForRes1[j] * t[k])
-                if CSch == 1:
-                    for k in range(0, len(t), 1):
-                        y[k] = sin(2 * pi * MassForRes1[j] * t[k])
-                n = len(y)
-                test = (sum(y[1:(n)]))
-                SetCurrent = test * timeStep + (y[0] + y[n - 1]) * timeStep / 2
-                S1[j] += SetCurrent * WFCoeff1[i - 1]
-            self.stat.setValue(int(j))
-        print(S1)
 
             # self.plainTextEdit.setPlainText("S =" + str(S))
             # self.plainTextEdit.appendPlainText("Step="+str(Step)+",   w="+str(MassForRes))
@@ -416,10 +405,37 @@ class MyWindow(QtWidgets.QWidget):
         self.plainTextEdit.setPlainText(
             "Коэффициент передачи = {} \n\nω - относительная частота = {}".format(round(abs(S[count]), 10),
                                                                                   MassForRes[count]))
+class LineBuilder:
+    def __init__(self, line):
+        self.line = line
+        self.xs = list(line.get_xdata())
+        self.ys = list(line.get_ydata())
+        line.get_xdata(1)
+        self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
+
+    def __call__(self, event):
+        print('click', event)
+        print(event.xdata)
+        print(event.ydata)
+        if event.inaxes!=self.line.axes: return
+        self.xs.append(event.xdata)
+        self.ys.append(event.ydata)
+        self.line.set_data(self.xs, self.ys)
+        self.line.figure.canvas.draw()
+
+def meh():
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set_title('click to build line segments')
+    line, = ax.plot([0, 100, 0.5],[0, 100, 0.5], color = 'blue', alpha=0.0)  # empty line
+    line2, = ax.plot([choice], [choice], 'r.')  # empty line
+    linebuilder = LineBuilder(line2)
+    plt.show()
 
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
+    from matplotlib import pyplot as plt
     app = QApplication(sys.argv)
     window = MyWindow()
     window.setWindowTitle("Функция для нахождения площадей основных гармонических составляющих")
