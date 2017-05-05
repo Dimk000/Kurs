@@ -1,8 +1,4 @@
-import csv
-import pprint
-
 import numpy as np
-
 
 def FreqToStruct(MassForRes, S, WFCoeff, wStep, quantStep):
 
@@ -12,16 +8,11 @@ def FreqToStruct(MassForRes, S, WFCoeff, wStep, quantStep):
     count = 0
     l = 0
     sPoints = np.zeros(60)
-    # print(len(MassForRes))
     while count < len(MassForRes):
         wPoints[l] = MassForRes[count]
         sPoints[l] = S[count] / sum(WFCoeff)
         count += StepInArray
         l += 1
-
-    #print(sPoints)
-    #print(sPoints1)
-
     SPointsQuint = np.zeros(60)
     for i in range(len(sPoints)):
         SPointsQuint[i] = (abs(round(sPoints[i], quantStep)))
@@ -37,4 +28,5 @@ def FreqToStruct(MassForRes, S, WFCoeff, wStep, quantStep):
                 if SPointsQuint[temp[j]] == 0:
                     SPointsQuint[temp[j]] = -1
                 M[i][temp[j]] = SPointsQuint[temp[j]]
+
     return M
