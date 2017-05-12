@@ -302,8 +302,8 @@ class MyWindow(QtWidgets.QWidget):
                 # print(file_data)
                 count += 1
         pprint.pprint(Mall)
-        print(Mall)
-        print(Mall[1][2])
+	a = sorted(Mall, key=lambda x: x[2], reverse=True)
+        pprint.pprint(a)
 
     def DrawGraph(self):
         global StartGraphX
